@@ -6,8 +6,8 @@
   <meta name="description" content="新疆鸟会队 2026 观鸟大年看板。查看队伍进展、查询鸟种、查看省级观鸟分布。">
   <title>新疆鸟会队观鸟记录 · 2026 观鸟大年</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23214b3e'/%3E%3Cpath d='M5 12q7-4 11 7 4-11 11-7M16 19v5' fill='none' stroke='%23f4f4e9' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20260929g">
-  <script type="module" src="app.js?v=20260929g"></script>
+  <link rel="stylesheet" href="styles.css?v=20260930a">
+  <script type="module" src="app.js?v=20260930a"></script>
 </head>
 <body>
   <!-- THESIS: A practical shared birding notebook: team progress leads directly to recent discoveries and the complete searchable checklist.
@@ -41,16 +41,10 @@
         <div id="recent-list" aria-live="polite"><p class="loading">正在载入新增鸟种…</p></div>
         <div class="panel-note">按队伍年度首次记录日期排列，每个鸟种只记一次。</div>
       </section>
-      <section class="panel footprint-panel" id="footprint" aria-labelledby="map-title">
-        <div class="section-heading"><div><h2 id="map-title">队伍观鸟分布</h2><p>有记录的省级地区点亮，颜色越深，鸟种越多。</p></div></div>
-        <div class="map-wrap" id="map-wrap"><p class="loading">正在载入地图…</p></div>
-        <div class="map-legend"><span><i class="legend-swatch"></i>有观鸟记录</span><span>点击省份查看鸟种数量</span></div>
-        <div id="province-summary" class="city-summary"></div>
-        <div class="city-footer"><span>记录中心 · 全队全年省级统计</span><button class="text-button" id="all-provinces">全部省份 <span aria-hidden="true">→</span></button></div>
-      </section>
+
     </div>
     <section class="panel catalog-panel" id="catalog" aria-labelledby="catalog-title">
-      <div class="section-heading"><div><h2 id="catalog-title">下一种，去找谁？</h2><p>翻一翻鸟种名录，寻找下一次出发的目标。</p></div><a class="button secondary catalog-download" id="download-checklist" href="./data/team-checklist.xlsx" download="新疆鸟会队完整记录清单.xlsx">下载完整记录清单</a></div>
+      <div class="section-heading"><div><h2 id="catalog-title">下一种，去找谁？</h2><p>翻一翻鸟种名录，寻找下一次出发的目标。</p></div><a class="button secondary catalog-download" id="download-checklist" href="./data/team-checklist.xlsx" download="新疆鸟会队完整记录清单.xlsx">下载完整清单</a></div>
       <div class="catalog-toolbar">
         <div class="filter-tabs" role="group" aria-label="鸟种状态筛选"><button class="selected" data-status="all" aria-pressed="true">全部鸟种 <span id="total-tab">—</span></button><button data-status="seen" aria-pressed="false">已记录 <span id="seen-tab">—</span></button><button data-status="unseen" aria-pressed="false">未记录 <span id="unseen-tab">—</span></button></div>
         <div class="catalog-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input type="search" id="search" placeholder="搜索鸟名、学名或英文名" aria-label="搜索鸟名、学名或英文名"><button id="clear-search" aria-label="清空搜索" hidden>×</button></div>
@@ -70,6 +64,13 @@
       <div class="monthly-chart"><div class="monthly-axis" aria-hidden="true"><span><span id="monthly-max">500</span> 种</span><span>0</span></div><div class="monthly-bars" id="monthly-bars" role="list" aria-label="2026 年每月记录鸟种数量"></div></div>
       <div class="monthly-note">记录中心统计口径 · 尚未到来的月份显示为“—”</div>
     </section>
+      <section class="panel footprint-panel" id="footprint" aria-labelledby="map-title">
+        <div class="section-heading"><div><h2 id="map-title">队伍观鸟分布</h2><p>有记录的省级地区点亮，颜色越深，鸟种越多。</p></div></div>
+        <div class="map-wrap" id="map-wrap"><p class="loading">正在载入地图…</p></div>
+        <div class="map-legend"><span><i class="legend-swatch"></i>有观鸟记录</span><span>点击省份查看鸟种数量</span></div>
+        <div id="province-summary" class="city-summary"></div>
+        <div class="city-footer"><span>记录中心 · 全队全年省级统计</span><button class="text-button" id="all-provinces">全部省份 <span aria-hidden="true">→</span></button></div>
+      </section>
     <footer><span>新疆鸟会队 · 2026 观鸟大年</span><p>一起发现，一起记录。</p><button class="text-button" id="source-info">名录与数据来源</button></footer>
     <div class="export-footer"><button class="button secondary" id="export-data"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg><span>导出大年队观鸟数据</span></button></div>
     <div id="load-error" class="load-error" hidden><h2>暂时无法加载数据</h2><p>请检查连接后重试。</p><button class="button" id="retry">重新加载</button></div>

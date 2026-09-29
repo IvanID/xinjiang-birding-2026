@@ -1,4 +1,4 @@
-import {createTeam,filterBirds,displayBirdName} from './team-data.js?v=20260929g';
+import {createTeam,filterBirds,displayBirdName} from './team-data.js?v=20260930a';
 let provinces=[];
 
 const $=selector=>document.querySelector(selector);
@@ -46,9 +46,9 @@ function renderMonthly(){
   $('#monthly-checked').textContent=`更新于 ${state.snapshot.statisticsFetchedAt.slice(0,10)}`;
 }
 function renderRecent(){
-  $('#recent-list').innerHTML=state.team.latest.slice(0,6).map((record,index)=>{
+  $('#recent-list').innerHTML=state.team.latest.slice(0,6).map(record=>{
     const b=state.byId.get(record.speciesId);
-    return `<button class="recent-row" data-bird="${b.id}"><span class="bird-number">${String(index+1).padStart(2,'0')}</span><span><span class="bird-name">${escape(displayBirdName(b))}</span><span class="bird-scientific">${escape(b.scientific)}</span>${record.recorderName?`<span class="recent-recorder">记录人：${escape(record.recorderName)}</span>`:''}</span><time class="recent-date" datetime="${record.date}">${record.date.slice(5).replace('-','.')}</time></button>`;
+    return `<button class="recent-row" data-bird="${b.id}"><span><span class="bird-name">${escape(displayBirdName(b))}</span><span class="bird-scientific">${escape(b.scientific)}</span><span class="recent-recorder">记录人：${escape(record.recorderName??'暂未获取')}</span></span><time class="recent-date" datetime="${record.date}">${record.date.slice(5).replace('-','.')}</time></button>`;
   }).join('');
 }
 function results(){return filterBirds(state.birds,state.team.seen,state);}
@@ -129,7 +129,7 @@ function mapMarkup(scope='china',output='ui'){
 function renderMap(){const markup=mapMarkup();if(markup)$('#map-wrap').innerHTML=markup;}
 async function imageFromSvg(svg){const image=new Image();image.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);await image.decode();return image;}
 const reportRankingHeight=rows=>rows.length?270+rows.length*100:0;
-const reportHeight=()=>3150+reportRankingHeight(state.snapshot.rankingHighlights??[]);
+const reportHeight=()=>3300+reportRankingHeight(state.snapshot.rankingHighlights??[]);
 async function buildReport(){
   await document.fonts.ready;
   const rankingRows=state.snapshot.rankingHighlights??[],rankingHeight=reportRankingHeight(rankingRows);
@@ -160,18 +160,17 @@ async function buildReport(){
     });
     text('记录中心官方计分口径',80,580+rankingHeight-32,36,muted);
   }
-  const recentY=620+rankingHeight;card(recentY,1230);
+  const recentY=620+rankingHeight;card(recentY,1380);
   text('最近新发现',72,recentY+88,52,ink,650);
   text('每一种新相遇，都让队伍向前一步。',72,recentY+150,36,muted);
   text('队伍新增鸟种',72,recentY+233,36,muted);ctx.textAlign='right';text('首次记录',1008,recentY+233,36,muted);ctx.textAlign='left';line(recentY+267);
   state.team.latest.slice(0,6).forEach((r,i)=>{
-    const y=recentY+267+i*151,b=state.byId.get(r.speciesId);
-    ctx.fillStyle='#eaf2e2';ctx.beginPath();ctx.arc(99,y+65,29,0,Math.PI*2);ctx.fill();
-    ctx.textAlign='center';text(String(i+1).padStart(2,'0'),99,y+78,34,'#597848');ctx.textAlign='left';
-    text(displayBirdName(b),151,y+58,44,ink,650);text(b.scientific,151,y+110,34,muted);
-    ctx.textAlign='right';text(r.date.slice(5).replace('-','.'),1008,y+65,40,muted);ctx.textAlign='left';if(i<5)line(y+151);
+    const y=recentY+267+i*175,b=state.byId.get(r.speciesId);
+    text(displayBirdName(b),72,y+48,44,ink,650);text(b.scientific,72,y+94,34,muted);
+    text(`记录人：${r.recorderName??'暂未获取'}`,72,y+143,36,muted);
+    ctx.textAlign='right';text(r.date.slice(5).replace('-','.'),1008,y+48,40,muted);ctx.textAlign='left';if(i<5)line(y+175);
   });
-  const mapY=recentY+1270;card(mapY,750);text('队伍观鸟分布 · 省级',72,mapY+85,50,ink,650);
+  const mapY=recentY+1420;card(mapY,750);text('队伍观鸟分布 · 省级',72,mapY+85,50,ink,650);
   const map=mapMarkup('china','report');if(map)ctx.drawImage(await imageFromSvg(map),2.4,mapY+110,1075.2,600);else text('地图暂未载入，请在网页查看',72,mapY+220,38,muted);
   const footerY=mapY+805;text(`更新时间 ${state.snapshot.sourceUpdatedAt??state.snapshot.latestObservation}`,48,footerY,34,muted);
   const qr=new Image();qr.src='./assets/dashboard-qr.png';await qr.decode();ctx.imageSmoothingEnabled=false;ctx.drawImage(qr,60,footerY+56,280,280);

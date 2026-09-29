@@ -61,3 +61,11 @@
 @media(max-width:850px){.catalog-browser{--family-width:140px}}
 @media(max-width:600px){.catalog-browser{--family-width:100px}.catalog-panel>.section-heading{display:flex;gap:12px}.catalog-panel>.section-heading>div{min-width:0}.catalog-download{max-width:138px;padding:10px 12px;min-height:44px}.page-heading .update-info{text-align:left}}
 @media(max-width:380px){.catalog-browser{--family-width:88px}.catalog-download{max-width:116px}}
+
+/* Recent records without numbering; geographic summary follows monthly counts. */
+.overview-grid{grid-template-columns:minmax(0,1fr)}
+.recent-row{grid-template-columns:minmax(0,1fr) auto}
+main>.footprint-panel{margin-top:24px}
+main>.footprint-panel .map-wrap{max-width:760px;margin-left:auto;margin-right:auto}
+.team-logo{width:75.6px;height:50.4px}
+@media(max-width:600px){.team-logo{width:70.2px;height:46.8px}.recent-row{grid-template-columns:minmax(0,1fr) auto}}
