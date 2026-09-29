@@ -1,0 +1,46 @@
+{
+  "source": "队长名录调整及最新指示：金腰燕、斑腰燕分开计数",
+  "baseVersion": "中国观鸟年报-中国鸟类名录 12.0（2024）",
+  "additions": [
+    {
+      "id": 1517,
+      "birdreportId": 5518,
+      "name": "白尾石䳭",
+      "scientific": "Saxicola leucurus",
+      "english": "White-tailed Stonechat",
+      "family": "鹟科",
+      "protection": "",
+      "redList": "LC",
+      "insertAfter": "黑喉石䳭"
+    },
+    {
+      "id": 1518,
+      "birdreportId": 4857,
+      "name": "斑腰燕",
+      "scientific": "Cecropis striolata",
+      "english": "Striated Swallow",
+      "family": "燕科",
+      "protection": "",
+      "redList": "NR",
+      "insertAfter": "金腰燕"
+    }
+  ],
+  "merges": [
+    {
+      "name": "黄喉穗鹛",
+      "scientific": "Cyanoderma ambiguum",
+      "english": "Buff-chested Babbler",
+      "into": "红额穗鹛"
+    }
+  ],
+  "separations": [
+    {
+      "from": "金腰燕",
+      "aliases": [
+        "斑腰燕",
+        "Cecropis striolata",
+        "Striated Swallow"
+      ]
+    }
+  ]
+}

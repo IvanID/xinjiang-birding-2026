@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#214b3e">
+  <meta name="description" content="新疆鸟会队 2026 观鸟大年看板。查看队伍进展、查询鸟种、查看省级观鸟分布。">
+  <title>新疆鸟会队观鸟记录 · 2026 观鸟大年</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23214b3e'/%3E%3Cpath d='M5 12q7-4 11 7 4-11 11-7M16 19v5' fill='none' stroke='%23f4f4e9' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css?v=20260929g">
+  <script type="module" src="app.js?v=20260929g"></script>
+</head>
+<body>
+  <!-- THESIS: A practical shared birding notebook: team progress leads directly to recent discoveries and the complete searchable checklist.
+  OWN-WORLD: User-approved cream paper, deep forest green, full pale-green seen rows, restrained rules and Chinese serif title.
+  STORY: Scan the team's verified progress, find an unseen bird, inspect available details, and export a clearly labeled data report.
+  FIRST VIEWPORT: Compact text header with the low-frequency export action at the page end, two statistics, then paired discoveries and province distribution; mobile stacks these surfaces.
+  FORM: User-pinned field notebook direction; surface seed c71dcbde, code-led. Seen-row state persists through filtering; dialog entrance respects reduced motion.
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md -->
+  <a class="skip-link" href="#catalog">跳到鸟种名录</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#overview" aria-label="新疆鸟会队首页">
+        <img class="team-logo" src="./assets/team-logo-large-pattern.png" alt="" width="72" height="48"><div class="brand-copy"><h1 id="page-title">新疆鸟会队观鸟记录</h1><small>2026中国观鸟记录中心观鸟大年活动</small></div>
+      </a>
+      
+      <nav aria-label="主导航"><a class="current" href="#overview">队伍概览</a><a href="#catalog">鸟种名录</a><a href="#footprint">观鸟分布</a></nav>
+    </div>
+  </header>
+  <main>
+    <section id="overview" aria-label="队伍概览">
+      <div class="page-heading"><div class="update-info"><span>更新时间 <strong id="data-cutoff">载入中</strong></span></div></div>
+      <div class="scoreboard" aria-label="队伍成绩">
+        <div class="primary-stat"><span class="metric-label">累计记录鸟种</span><div class="species-total-line"><strong id="species-count">—</strong><span>种</span><small class="catalog-total-note" title="名录总鸟种数"><span class="sr-only">名录总鸟种数</span>/ <span id="catalog-total">—</span></small></div><span class="stat-note" id="new-this-month">正在载入名录</span></div>
+        <div class="rank-overview" id="rank-overview" aria-labelledby="ranking-title"><h2 class="ranking-heading" id="ranking-title">全国队伍排名</h2><div class="ranking-list" id="ranking-list" hidden><table class="ranking-table"><caption class="sr-only">全国队伍榜：前三名、前一名与新疆鸟会队</caption><thead><tr><th scope="col">名次</th><th scope="col">队伍</th><th scope="col">鸟种数</th></tr></thead><tbody id="ranking-rows"></tbody></table><p class="ranking-note">记录中心官方计分口径</p></div></div>
+      </div>
+    </section>
+    <div class="overview-grid">
+      <section class="panel recent-panel" aria-labelledby="recent-title">
+        <div class="section-heading"><div><h2 id="recent-title">最近新发现</h2><p>每一种新相遇，都让队伍向前一步。</p></div><button class="text-button" id="all-recent">查看全部 <span aria-hidden="true">→</span></button></div>
+        <div class="recent-table-label"><span>队伍新增鸟种</span><span>首次记录</span></div>
+        <div id="recent-list" aria-live="polite"><p class="loading">正在载入新增鸟种…</p></div>
+        <div class="panel-note">按队伍年度首次记录日期排列，每个鸟种只记一次。</div>
+      </section>
+      <section class="panel footprint-panel" id="footprint" aria-labelledby="map-title">
+        <div class="section-heading"><div><h2 id="map-title">队伍观鸟分布</h2><p>有记录的省级地区点亮，颜色越深，鸟种越多。</p></div></div>
+        <div class="map-wrap" id="map-wrap"><p class="loading">正在载入地图…</p></div>
+        <div class="map-legend"><span><i class="legend-swatch"></i>有观鸟记录</span><span>点击省份查看鸟种数量</span></div>
+        <div id="province-summary" class="city-summary"></div>
+        <div class="city-footer"><span>记录中心 · 全队全年省级统计</span><button class="text-button" id="all-provinces">全部省份 <span aria-hidden="true">→</span></button></div>
+      </section>
+    </div>
+    <section class="panel catalog-panel" id="catalog" aria-labelledby="catalog-title">
+      <div class="section-heading"><div><h2 id="catalog-title">下一种，去找谁？</h2><p>翻一翻鸟种名录，寻找下一次出发的目标。</p></div><a class="button secondary catalog-download" id="download-checklist" href="./data/team-checklist.xlsx" download="新疆鸟会队完整记录清单.xlsx">下载完整记录清单</a></div>
+      <div class="catalog-toolbar">
+        <div class="filter-tabs" role="group" aria-label="鸟种状态筛选"><button class="selected" data-status="all" aria-pressed="true">全部鸟种 <span id="total-tab">—</span></button><button data-status="seen" aria-pressed="false">已记录 <span id="seen-tab">—</span></button><button data-status="unseen" aria-pressed="false">未记录 <span id="unseen-tab">—</span></button></div>
+        <div class="catalog-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input type="search" id="search" placeholder="搜索鸟名、学名或英文名" aria-label="搜索鸟名、学名或英文名"><button id="clear-search" aria-label="清空搜索" hidden>×</button></div>
+      </div>
+      <div class="catalog-key"><span class="seen-key"><i></i>浅绿色为队伍已记录</span></div>
+      <div class="catalog-browser">
+        <nav class="family-nav" id="family-nav" aria-label="按科浏览鸟种"></nav>
+        <div class="species-pane" tabindex="0" role="region" aria-label="鸟种列表，可上下滚动">
+          <div id="catalog-body" class="species-list" aria-live="polite"></div>
+          <div id="empty-state" class="empty-state" hidden><h3>没有找到匹配的鸟种</h3><p>试试其他科，或清除筛选后再找。</p><button class="button secondary" id="reset-filters">清除全部筛选</button></div>
+          <div class="catalog-results" id="result-count" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+    <section class="panel monthly-panel" id="monthly-panel" aria-labelledby="monthly-title" hidden>
+      <div class="section-heading"><div><h2 id="monthly-title">每月记录鸟种</h2><p>当月记录的全部鸟种，跨月可重复；不是每月新增鸟种。</p></div><span class="monthly-meta" id="monthly-checked"></span></div>
+      <div class="monthly-chart"><div class="monthly-axis" aria-hidden="true"><span><span id="monthly-max">500</span> 种</span><span>0</span></div><div class="monthly-bars" id="monthly-bars" role="list" aria-label="2026 年每月记录鸟种数量"></div></div>
+      <div class="monthly-note">记录中心统计口径 · 尚未到来的月份显示为“—”</div>
+    </section>
+    <footer><span>新疆鸟会队 · 2026 观鸟大年</span><p>一起发现，一起记录。</p><button class="text-button" id="source-info">名录与数据来源</button></footer>
+    <div class="export-footer"><button class="button secondary" id="export-data"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg><span>导出大年队观鸟数据</span></button></div>
+    <div id="load-error" class="load-error" hidden><h2>暂时无法加载数据</h2><p>请检查连接后重试。</p><button class="button" id="retry">重新加载</button></div>
+  </main>
+  <dialog id="details-dialog" class="details-dialog" aria-labelledby="dialog-label"><div class="dialog-heading"><span id="dialog-label">鸟种详情</span><button class="icon-button close-dialog" aria-label="关闭详情">×</button></div><div id="details-content"></div></dialog>
+  <dialog id="report-dialog" class="report-dialog" aria-labelledby="report-title"><div class="dialog-heading"><div><strong id="report-title">微信群战报</strong><small>最近成功同步的数据 · PNG 长图</small></div><button class="icon-button close-dialog" aria-label="关闭战报预览">×</button></div><div id="report-content" class="report-content"><p>正在生成战报…</p></div><div class="report-actions"><button class="button secondary close-dialog">返回看板</button><a class="button" id="download-report" download="新疆鸟会队-2026-观鸟数据.png">下载长图</a></div></dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>
