@@ -1,6 +1,7 @@
-import {createTeam,filterBirds,displayBirdName} from './team-data.js?v=20260930a';
+import {createTeam,filterBirds,displayBirdName} from './team-data.js?v=20260930b';
 let provinces=[];
 
+const recorderLabel=record=>record.recorderName??(record.recorderStatus==='private'?'原站未公开':'暂未获取');
 const $=selector=>document.querySelector(selector);
 const $$=selector=>[...document.querySelectorAll(selector)];
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -48,7 +49,7 @@ function renderMonthly(){
 function renderRecent(){
   $('#recent-list').innerHTML=state.team.latest.slice(0,6).map(record=>{
     const b=state.byId.get(record.speciesId);
-    return `<button class="recent-row" data-bird="${b.id}"><span><span class="bird-name">${escape(displayBirdName(b))}</span><span class="bird-scientific">${escape(b.scientific)}</span><span class="recent-recorder">记录人：${escape(record.recorderName??'暂未获取')}</span></span><time class="recent-date" datetime="${record.date}">${record.date.slice(5).replace('-','.')}</time></button>`;
+    return `<button class="recent-row" data-bird="${b.id}"><span><span class="bird-name">${escape(displayBirdName(b))}</span><span class="bird-scientific">${escape(b.scientific)}</span><span class="recent-recorder">记录人：${escape(recorderLabel(record))}</span></span><time class="recent-date" datetime="${record.date}">${record.date.slice(5).replace('-','.')}</time></button>`;
   }).join('');
 }
 function results(){return filterBirds(state.birds,state.team.seen,state);}
@@ -93,7 +94,7 @@ function bindEvents(){
 function openDetails(label,html){$('#dialog-label').textContent=label;$('#details-content').innerHTML=html;const d=$('#details-dialog');if(!d.open)d.showModal();d.scrollTop=0;}
 function openBird(id){
   const b=state.byId.get(id),record=state.team.seen.get(id);if(!b||!record)return;
-  openDetails('鸟种详情',`<div class="detail-badges"><span>${record?'队伍已记录':'队伍未记录'}</span><span>${escape(b.family)}</span></div><h2 class="detail-title">${escape(displayBirdName(b))}</h2><p class="detail-subtitle">${escape(b.scientific)}<br>${escape(b.english)}</p>${record?`<dl class="detail-grid"><div><dt>首次记录日期</dt><dd>${record.date}</dd></div><div><dt>名录编号</dt><dd>${b.id}</dd></div><div class="recorder-detail"><dt>记录人（网名）</dt><dd>${escape(record.recorderName??'暂未获取')}</dd></div></dl>`:'<p class="detail-notice">当前队伍清单中还没有这个鸟种的记录。</p>'}<p class="detail-notice">鸟名按当前中国鸟类名录归一；日期来自记录中心。${record.recorderName?'记录人来自队长导入表，已核对物种编号与首次记录日期。':'当前公开接口未提供记录人，导入表也未覆盖这条首次记录。'}</p>`);
+  openDetails('鸟种详情',`<div class="detail-badges"><span>${record?'队伍已记录':'队伍未记录'}</span><span>${escape(b.family)}</span></div><h2 class="detail-title">${escape(displayBirdName(b))}</h2><p class="detail-subtitle">${escape(b.scientific)}<br>${escape(b.english)}</p>${record?`<dl class="detail-grid"><div><dt>首次记录日期</dt><dd>${record.date}</dd></div><div><dt>名录编号</dt><dd>${b.id}</dd></div><div class="recorder-detail"><dt>记录人（网名）</dt><dd>${escape(recorderLabel(record))}</dd></div></dl>`:'<p class="detail-notice">当前队伍清单中还没有这个鸟种的记录。</p>'}<p class="detail-notice">鸟名按当前中国鸟类名录归一；日期来自记录中心。${record.recorderStatus==='private'?'原站将这条首次记录的记录用户隐藏，当前账号无法查看。':record.recorderStatus==='verified'?'记录人已从记录中心队伍明细核对，鸟种与首次记录日期一致。':record.recorderName?'记录人来自队长导入表，已核对物种编号与首次记录日期。':'当前公开接口未提供记录人，导入表也未覆盖这条首次记录。'}</p>`);
 }
 function renderProvinceSummary(){
   $('#footprint').hidden=!provinces.length;
@@ -167,7 +168,7 @@ async function buildReport(){
   state.team.latest.slice(0,6).forEach((r,i)=>{
     const y=recentY+267+i*175,b=state.byId.get(r.speciesId);
     text(displayBirdName(b),72,y+48,44,ink,650);text(b.scientific,72,y+94,34,muted);
-    text(`记录人：${r.recorderName??'暂未获取'}`,72,y+143,36,muted);
+    text(`记录人：${recorderLabel(r)}`,72,y+143,36,muted);
     ctx.textAlign='right';text(r.date.slice(5).replace('-','.'),1008,y+48,40,muted);ctx.textAlign='left';if(i<5)line(y+175);
   });
   const mapY=recentY+1420;card(mapY,750);text('队伍观鸟分布 · 省级',72,mapY+85,50,ink,650);
