@@ -1,7 +1,7 @@
-import {createTeam,filterBirds,displayBirdName} from './team-data.js?v=20260930c';
+import {createTeam,filterBirds,displayBirdName} from './team-data.js?v=20260930d';
 let provinces=[];
 
-const recorderLabel=record=>record.recorderName??(record.recorderStatus==='private'?'原站未公开':'暂未获取');
+const recorderLabel=record=>record.recorderName?.trim()||'***';
 const $=selector=>document.querySelector(selector);
 const $$=selector=>[...document.querySelectorAll(selector)];
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -27,7 +27,7 @@ async function init(){
 function renderOverview(){
   $('#species-count').textContent=number(state.team.count);$('#catalog-total').textContent=number(state.birds.length);
   $('#new-this-month').textContent=`${Number(state.snapshot.latestObservation.slice(5,7))} 月新增 ${state.team.monthCount} 种${state.snapshot.sourceCount>state.team.count?` · 名录合并 ${state.snapshot.sourceCount-state.team.count} 种（官方 ${state.snapshot.sourceCount} 种）`:""}`;
-  $('#data-cutoff').textContent=state.snapshot.sourceUpdatedAt??state.snapshot.latestObservation;
+  $('#data-cutoff').textContent=state.snapshot.fetchedAt.replace('T',' ').replace('+08:00','');
   $('#rank-overview').hidden=state.team.rank==null;
   renderRanking();
   $('#total-tab').textContent=number(state.birds.length);$('#seen-tab').textContent=state.team.count;$('#unseen-tab').textContent=number(state.birds.length-state.team.count);
@@ -105,7 +105,7 @@ function bindEvents(){
 function openDetails(label,html){$('#dialog-label').textContent=label;$('#details-content').innerHTML=html;const d=$('#details-dialog');if(!d.open)d.showModal();d.scrollTop=0;}
 function openBird(id){
   const b=state.byId.get(id),record=state.team.seen.get(id);if(!b||!record)return;
-  openDetails('鸟种详情',`<div class="detail-badges"><span>${record?'队伍已记录':'队伍未记录'}</span><span>${escape(b.family)}</span></div><h2 class="detail-title">${escape(displayBirdName(b))}</h2><p class="detail-subtitle">${escape(b.scientific)}<br>${escape(b.english)}</p>${record?`<dl class="detail-grid"><div><dt>首次记录日期</dt><dd>${record.date}</dd></div><div><dt>名录编号</dt><dd>${b.id}</dd></div><div class="recorder-detail"><dt>记录人（网名）</dt><dd>${escape(recorderLabel(record))}</dd></div></dl>`:'<p class="detail-notice">当前队伍清单中还没有这个鸟种的记录。</p>'}<p class="detail-notice">鸟名按当前中国鸟类名录归一；日期来自记录中心。${record.recorderStatus==='private'?'原站将这条首次记录的记录用户隐藏，当前账号无法查看。':record.recorderStatus==='verified'?'记录人已从记录中心队伍明细核对，鸟种与首次记录日期一致。':record.recorderName?'记录人来自队长导入表，已核对物种编号与首次记录日期。':'当前公开接口未提供记录人，导入表也未覆盖这条首次记录。'}</p>`);
+  openDetails('鸟种详情',`<div class="detail-badges"><span>${record?'队伍已记录':'队伍未记录'}</span><span>${escape(b.family)}</span></div><h2 class="detail-title">${escape(displayBirdName(b))}</h2><p class="detail-subtitle">${escape(b.scientific)}<br>${escape(b.english)}</p>${record?`<dl class="detail-grid"><div><dt>首次记录日期</dt><dd>${record.date}</dd></div><div><dt>名录编号</dt><dd>${b.id}</dd></div><div class="recorder-detail"><dt>记录人（网名）</dt><dd>${escape(recorderLabel(record))}</dd></div></dl>`:'<p class="detail-notice">当前队伍清单中还没有这个鸟种的记录。</p>'}<p class="detail-notice">鸟名按当前中国鸟类名录归一；日期来自记录中心。${record.recorderStatus==='private'?'原站将这条首次记录的记录用户隐藏，当前账号无法查看。':record.recorderStatus==='verified'?'记录人已从记录中心队伍明细核对，鸟种与首次记录日期一致。':record.recorderName?'记录人来自队长导入表，已核对物种编号与首次记录日期。':'*** 表示原站隐藏或暂未取得记录人。'}</p>`);
 }
 function renderProvinceSummary(){
   $('#footprint').hidden=!provinces.length;
@@ -114,7 +114,7 @@ function renderProvinceSummary(){
 }
 function openProvinces(){openDetails('省级观鸟分布',`<h2 class="detail-title">队伍的省级记录</h2><p class="detail-notice">全年在各省级地区记录的全部鸟种，同一鸟种可在多个省份分别计数，不能相加作为队伍总鸟种数。</p><div class="all-city-list">${provinces.map(p=>`<button data-province="${p.code}"><span>${escape(p.name)}</span><small>${p.count} 种 ›</small></button>`).join('')}</div>`);}
 function openProvince(code){const p=provinces.find(p=>p.code===code);if(!p)return;openDetails('省级观鸟分布',`<h2 class="detail-title">${escape(p.name)}</h2><p class="detail-subtitle" style="font-style:normal">2026 年全队累计记录 ${p.count} 种鸟</p><p class="detail-notice">来自记录中心的队伍全年地区统计，包含在其他省份也记录过的鸟种。当前地图按省级地区展示。</p><p><a href="${escape(state.snapshot.sourceUrl)}" target="_blank" rel="noopener noreferrer">查看记录中心队伍统计 ↗</a></p>`);}
-function openSources(){openDetails('名录与数据说明',`<div class="source-content"><h2 class="detail-title">真实记录，每日核对</h2><p><strong>鸟种记录：</strong>中国观鸟记录中心 2026 年新疆鸟会队（队伍 1849），原站 ${state.snapshot.sourceCount} 条，按当前名录归一后 ${state.team.count} 种。原站统计时间：${escape(state.snapshot.sourceUpdatedAt??'未提供')}；最近成功读取：${escape(state.snapshot.fetchedAt.replace('T',' ').replace('+08:00',''))}（北京时间）。最新观测日期为 ${state.snapshot.latestObservation}，不等同于更新时间。</p><p><strong>名录：</strong>《中国鸟类名录 12.0（2024）》加队长补充白尾石䳭及独立列出的斑腰燕，共 ${number(state.birds.length)} 种。金腰燕与斑腰燕按队长最新要求分开计数，各自保留首次记录日期。黄喉穗鹛仍归入红额穗鹛。同一鸟种保留最早记录日期；学名优先匹配，避免“田鹨”等同名异种误合并。总鸟种数可能与原站不同。</p><p><strong>记录人：</strong>显示队长导入表中的账号网名，按物种编号和首次记录日期核对后关联。手机号形式的网名已打码；未获得对应网名时不推测。网名不是数字账号 ID，公开队伍接口暂未提供数字账号 ID。</p><p><strong>观鸟分布：</strong>来自记录中心的全队年度省级统计。有记录的省份点亮，颜色深浅对应该省全年记录鸟种数；同一鸟种可在多个省份重复计数。当前没有接入完整市级数据，市级足迹留待后续版本。省级数据读取时间：${escape(state.snapshot.geographyFetchedAt??"未提供")}。</p><p><strong>全国排名：</strong>直接采用记录中心官网首页的 2026 年队伍榜单顺序，当前第 ${state.team.rank} 名，官方榜单鸟种数 ${state.snapshot.rankSourceCount} 种，保留官方口径。榜单读取时间：${escape(state.snapshot.rankingFetchedAt??state.snapshot.statisticsFetchedAt??"未提供")}。</p><p><strong>月度记录：</strong>来自记录中心的队伍月度统计，统计每个月记录的全部鸟种，同一鸟种在不同月份可以重复出现，不是每月新增鸟种数。排名与月度数据读取时间：${escape(state.snapshot.statisticsFetchedAt?.replace("T"," ").replace("+08:00","")??"未提供")}（北京时间）。</p><p><strong>更新：</strong>北京时间每天 00:00 尝试同步，依赖队长电脑开机且 Codex 运行。原站可能延后生成统计，以页面标注的实际时间为准。失败时保留上一次成功数据，不将失败记为零。Excel 导入继续作为备用方式。</p><p><strong>地图边界：</strong>阿里云 DataV 行政区划数据。</p><p><a href="${escape(state.snapshot.sourceUrl)}" target="_blank" rel="noopener noreferrer">查看记录中心队伍页面 ↗</a></p></div>`);}
+function openSources(){openDetails('名录与数据说明',`<div class="source-content"><h2 class="detail-title">真实记录，每日核对</h2><p><strong>鸟种记录：</strong>中国观鸟记录中心 2026 年新疆鸟会队（队伍 1849），原站 ${state.snapshot.sourceCount} 条，按当前名录归一后 ${state.team.count} 种。原站统计时间：${escape(state.snapshot.sourceUpdatedAt??'未提供')}；最近成功读取：${escape(state.snapshot.fetchedAt.replace('T',' ').replace('+08:00',''))}（北京时间）。最新观测日期为 ${state.snapshot.latestObservation}，不等同于更新时间。</p><p><strong>名录：</strong>《中国鸟类名录 12.0（2024）》加队长补充白尾石䳭及独立列出的斑腰燕，共 ${number(state.birds.length)} 种。金腰燕与斑腰燕按队长最新要求分开计数，各自保留首次记录日期。黄喉穗鹛仍归入红额穗鹛。同一鸟种保留最早记录日期；学名优先匹配，避免“田鹨”等同名异种误合并。总鸟种数可能与原站不同。</p><p><strong>记录人：</strong>显示导入表或已登录原站明细中核实的账号网名，按物种编号和首次记录日期核对后关联。手机号形式的网名已打码；未获得对应网名时显示 ***，不推测姓名或保密状态。网名不是数字账号 ID，公开队伍接口暂未提供数字账号 ID。</p><p><strong>观鸟分布：</strong>来自记录中心的全队年度省级统计。有记录的省份点亮，颜色深浅对应该省全年记录鸟种数；同一鸟种可在多个省份重复计数。当前没有接入完整市级数据，市级足迹留待后续版本。省级数据读取时间：${escape(state.snapshot.geographyFetchedAt??"未提供")}。</p><p><strong>全国排名：</strong>直接采用记录中心官网首页的 2026 年队伍榜单顺序，当前第 ${state.team.rank} 名，官方榜单鸟种数 ${state.snapshot.rankSourceCount} 种，保留官方口径。榜单读取时间：${escape(state.snapshot.rankingFetchedAt??state.snapshot.statisticsFetchedAt??"未提供")}。</p><p><strong>月度记录：</strong>来自记录中心的队伍月度统计，统计每个月记录的全部鸟种，同一鸟种在不同月份可以重复出现，不是每月新增鸟种数。月度数据读取时间：${escape(state.snapshot.statisticsFetchedAt?.replace("T"," ").replace("+08:00","")??"未提供")}（北京时间）。</p><p><strong>更新：</strong>北京时间每天 00:00 尝试同步，依赖队长电脑开机且 Codex 运行。顶栏下的更新时间为鸟种记录与清单最近成功同步的时间；仅更新排名、修改页面或同步失败不会改变这个时间。原站可能延后生成统计，原站统计时间单独保留。失败时保留上一次成功数据，不将失败记为零。Excel 导入继续作为备用方式。</p><p><strong>地图边界：</strong>阿里云 DataV 行政区划数据。</p><p><a href="${escape(state.snapshot.sourceUrl)}" target="_blank" rel="noopener noreferrer">查看记录中心队伍页面 ↗</a></p></div>`);}
 
 // Official all-team annual province totals; first-record locations are not used.
 function coordinates(geometry){return geometry.type==='Polygon'?geometry.coordinates:geometry.type==='MultiPolygon'?geometry.coordinates.flat():[];}
@@ -184,7 +184,7 @@ async function buildReport(){
   });
   const mapY=recentY+1420;card(mapY,750);text('队伍观鸟分布 · 省级',72,mapY+85,50,ink,650);
   const map=mapMarkup('china','report');if(map)ctx.drawImage(await imageFromSvg(map),2.4,mapY+110,1075.2,600);else text('地图暂未载入，请在网页查看',72,mapY+220,38,muted);
-  const footerY=mapY+805;text(`更新时间 ${state.snapshot.sourceUpdatedAt??state.snapshot.latestObservation}`,48,footerY,34,muted);
+  const footerY=mapY+805;text(`更新时间 ${state.snapshot.fetchedAt.replace('T',' ').replace('+08:00','')}`,48,footerY,34,muted);
   const qr=new Image();qr.src='./assets/dashboard-qr.png';await qr.decode();ctx.imageSmoothingEnabled=false;ctx.drawImage(qr,60,footerY+56,280,280);
   text('长按二维码，扫一扫查看详情',384,footerY+160,40,ink,550);text('查看最新记录与完整鸟种名录',384,footerY+220,36,muted);
   return await new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('长图生成失败')),'image/png'));
