@@ -6,8 +6,8 @@
   <meta name="description" content="新疆鸟会队 2026 观鸟大年看板。查看队伍进展、查询鸟种、查看省级观鸟分布。">
   <title>新疆鸟会队观鸟记录 · 2026 观鸟大年</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23214b3e'/%3E%3Cpath d='M5 12q7-4 11 7 4-11 11-7M16 19v5' fill='none' stroke='%23f4f4e9' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20260930b">
-  <script type="module" src="app.js?v=20260930b"></script>
+  <link rel="stylesheet" href="styles.css?v=20260930c">
+  <script type="module" src="app.js?v=20260930c"></script>
 </head>
 <body>
   <!-- THESIS: A practical shared birding notebook: team progress leads directly to recent discoveries and the complete searchable checklist.
@@ -31,7 +31,7 @@
       <div class="page-heading"><div class="update-info"><span>更新时间 <strong id="data-cutoff">载入中</strong></span></div></div>
       <div class="scoreboard" aria-label="队伍成绩">
         <div class="primary-stat"><span class="metric-label">累计记录鸟种</span><div class="species-total-line"><strong id="species-count">—</strong><span>种</span><small class="catalog-total-note" title="名录总鸟种数"><span class="sr-only">名录总鸟种数</span>/ <span id="catalog-total">—</span></small></div><span class="stat-note" id="new-this-month">正在载入名录</span></div>
-        <div class="rank-overview" id="rank-overview" aria-labelledby="ranking-title"><h2 class="ranking-heading" id="ranking-title">全国队伍排名</h2><div class="ranking-list" id="ranking-list" hidden><table class="ranking-table"><caption class="sr-only">全国队伍榜：前三名、前一名与新疆鸟会队</caption><thead><tr><th scope="col">名次</th><th scope="col">队伍</th><th scope="col">鸟种数</th></tr></thead><tbody id="ranking-rows"></tbody></table><p class="ranking-note">记录中心官方计分口径</p></div></div>
+        <div class="rank-overview" id="rank-overview" aria-labelledby="ranking-title"><div class="ranking-heading-row"><h2 class="ranking-heading" id="ranking-title">全国队伍排名</h2><button class="text-button" id="all-rankings" aria-haspopup="dialog" aria-controls="ranking-dialog" hidden>查看完整排名 <span aria-hidden="true">→</span></button></div><div class="ranking-list" id="ranking-list" hidden><table class="ranking-table"><caption class="sr-only">全国队伍榜：前三名、前一名与新疆鸟会队</caption><thead><tr><th scope="col">名次</th><th scope="col">队伍</th><th scope="col">鸟种数</th></tr></thead><tbody id="ranking-rows"></tbody></table><p class="ranking-note">记录中心官方计分口径</p></div></div>
       </div>
     </section>
     <div class="overview-grid">
@@ -76,6 +76,7 @@
     <div id="load-error" class="load-error" hidden><h2>暂时无法加载数据</h2><p>请检查连接后重试。</p><button class="button" id="retry">重新加载</button></div>
   </main>
   <dialog id="details-dialog" class="details-dialog" aria-labelledby="dialog-label"><div class="dialog-heading"><span id="dialog-label">鸟种详情</span><button class="icon-button close-dialog" aria-label="关闭详情">×</button></div><div id="details-content"></div></dialog>
+  <dialog id="ranking-dialog" class="ranking-dialog" aria-labelledby="full-ranking-title"><div class="dialog-heading"><strong id="full-ranking-title">全国队伍完整排名</strong><button class="icon-button close-dialog" aria-label="关闭完整排名">×</button></div><div class="ranking-summary"><p id="ranking-summary-text"></p><button class="text-button" id="locate-team">定位新疆鸟会队</button></div><div class="full-ranking-scroll" tabindex="0" role="region" aria-label="全部队伍排名，可上下滚动"><table class="ranking-table full-ranking-table"><caption class="sr-only">2026 中国观鸟大年全国队伍排名</caption><thead><tr><th scope="col">名次</th><th scope="col">队伍</th><th scope="col">鸟种数</th></tr></thead><tbody id="full-ranking-rows"></tbody></table></div><p class="full-ranking-note">记录中心官方计分口径 · 浅绿色为新疆鸟会队</p></dialog>
   <dialog id="report-dialog" class="report-dialog" aria-labelledby="report-title"><div class="dialog-heading"><div><strong id="report-title">微信群战报</strong><small>最近成功同步的数据 · PNG 长图</small></div><button class="icon-button close-dialog" aria-label="关闭战报预览">×</button></div><div id="report-content" class="report-content"><p>正在生成战报…</p></div><div class="report-actions"><button class="button secondary close-dialog">返回看板</button><a class="button" id="download-report" download="新疆鸟会队-2026-观鸟数据.png">下载长图</a></div></dialog>
   <div class="toast" id="toast" role="status" hidden></div>
 </body>

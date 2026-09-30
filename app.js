@@ -1,4 +1,4 @@
-import {createTeam,filterBirds,displayBirdName} from './team-data.js?v=20260930b';
+import {createTeam,filterBirds,displayBirdName} from './team-data.js?v=20260930c';
 let provinces=[];
 
 const recorderLabel=record=>record.recorderName??(record.recorderStatus==='private'?'原站未公开':'暂未获取');
@@ -35,7 +35,16 @@ function renderOverview(){
 function renderRanking(){
   const rows=state.snapshot.rankingHighlights??[];
   $('#ranking-list').hidden=!rows.length;
+  $('#all-rankings').hidden=!state.snapshot.ranking?.length;
   $('#ranking-rows').innerHTML=rows.map((r,i)=>`<tr class="${r.teamId===1849?'our-team ':''}${i>0&&r.rank>rows[i-1].rank+1?'rank-gap':''}" ${r.teamId===1849?'aria-current="true"':''}><td>${r.rank}</td><th scope="row">${escape(r.teamId===1849?'新疆鸟会队':r.name)}</th><td>${number(r.count)}</td></tr>`).join('');
+}
+function openRankings(){
+  const rows=state.snapshot.ranking??[];
+  const checked=state.snapshot.rankingFetchedAt?.replace('T',' ').replace('+08:00','')??'—';
+  $('#ranking-summary-text').textContent=`共 ${number(rows.length)} 支队伍 · 更新于 ${checked}`;
+  $('#full-ranking-rows').innerHTML=rows.map(r=>`<tr ${r.teamId===1849?'class="our-team" aria-current="true" id="full-ranking-own" tabindex="-1"':''}><td>${r.rank}</td><th scope="row">${escape(r.teamId===1849?'新疆鸟会队':r.name)}</th><td>${number(r.count)}</td></tr>`).join('');
+  $('#ranking-dialog').showModal();
+  $('.full-ranking-scroll').scrollTop=0;
 }
 function renderMonthly(){
   const months=state.snapshot.monthlyCounts;
@@ -84,6 +93,8 @@ function bindEvents(){
 
   $('#all-recent').addEventListener('click',()=>{setFilters({status:'seen',sort:'latest',query:'',family:'all'});$('#catalog').scrollIntoView({behavior:'smooth'});});
   $('#all-provinces').addEventListener('click',openProvinces);
+  $('#all-rankings').addEventListener('click',openRankings);
+  $('#locate-team').addEventListener('click',()=>{const row=$('#full-ranking-own');if(row){row.scrollIntoView({block:'center'});row.focus({preventScroll:true});}});
   $('#source-info').addEventListener('click',openSources);
   $$('.close-dialog').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
   $$('dialog').forEach(d=>d.addEventListener('click',event=>{if(event.target===d){const r=d.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)d.close();}}));
